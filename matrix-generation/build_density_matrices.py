@@ -11,11 +11,11 @@ import pickle
 import nltk
 import numpy as np
 
+from operations.constants import FLOAT_PRECISION
+
 nltk.download('wordnet', quiet=True)
 
 from nltk.corpus import wordnet as wn
-
-tol = 1e-8
 
 
 def hypo(s):
@@ -29,11 +29,11 @@ def hyper(s):
 def get_all_hypernyms(words):
     """
     Given an iterable objects containing the words for which the density matrices should be created, this function
-    returns a set contaning the words and all hypernyms of these words
-        (which will be required for the calculation of the density matrices)
+    returns a set containing the words and all hypernyms of these words
+    (which will be required for the calculation of the density matrices)
 
-    :param words: iterable object of words for which the density matrices should be calculated
-    :return: set of all hypernyms of words (including words themselves)
+    :param words: Iterable object of words for which the density matrices should be calculated
+    :return: Set of all hypernyms of words (including words themselves)
     """
     all_words = set()
 
@@ -128,13 +128,13 @@ def build_density_matrix(hypos, dim, hypo_vectors):
         matrix += vv
 
     v = matrix
-    if np.all(abs(v) < tol):
+    if np.all(abs(v) < FLOAT_PRECISION):
         return 'OOV'
 
-    maxeig = np.max(np.linalg.eigvalsh(v))
-    assert not abs(maxeig) < tol, "Max eigenvalue is 0, should be OOV"
-    if maxeig > 1:
-        v = v / maxeig
+    max_eig = np.max(np.linalg.eigvalsh(v))
+    assert not abs(max_eig) < FLOAT_PRECISION, "Max eigenvalue is 0, should be OOV"
+    if max_eig > 1:
+        v = v / max_eig
         matrix = v
 
     return matrix
@@ -191,7 +191,6 @@ def run_density_matrix_generation(data_set, vector_file,
     :param data_set: Location of the dataset.
     :param vector_file: The file where the (GloVe) vectors are stored.
     :param output_file_name: Location where the pickle of the density matrices should be stored.
-    :return: Nothing.
     """
 
     print("Fetching words from Kruszewski et. al. data")
