@@ -150,5 +150,12 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-/data
-!/data/readme.txt
+
+data/alternative_datasets/*
+!data/alternative_datasets/readme.txt
+
+data/density_matrices/*
+!data/density_matrices/readme.txt
+
+data/glove/*
+!data/glove/readme.txt
