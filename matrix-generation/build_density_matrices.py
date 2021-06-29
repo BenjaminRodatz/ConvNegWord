@@ -106,14 +106,13 @@ def get_word_hyponyms(word, pos='n', depth=10):
     return hyponyms
 
 
-def build_density_matrix(word, dim, hypos, hypo_vectors):
+def build_density_matrix(hypos, dim, hypo_vectors):
     """
-    Build the density matrix for a given word by taking all the vectors of the hyponyms and summing their
-    outer products.
+    Build the density matrix for a given word with the hyponyms specified in hypos by taking all the vectors of the
+    hyponyms and summing their outer products.
 
-    :param word: The word for which a density matrix should be build.
-    :param dim:  The dimension of the vectors.
     :param hypos: The hyponyms of the word.
+    :param dim:  The dimension of the vectors.
     :param hypo_vectors: All the (GloVe) vectors.
     :return: The density matrix of the word.
     """
@@ -207,10 +206,12 @@ def run_density_matrix_generation(data_set, vector_file,
     count = 0
     print("Fetching hyponyms")
     for word in all_words:
-        if count % 100 == 0:
-            print("Got the hyponyms of ", count, " words out of ", len(all_words))
-        hypo_dict[word] = get_word_hyponyms(word)
         count += 1
+
+        hypo_dict[word] = get_word_hyponyms(word)
+
+        if count % 100 == 0 or count == len(all_words):
+            print("Got the hyponyms of ", count, " words out of ", len(all_words))
 
     with open("../data/density_matrices/all-hypos-temp.p", "wb") as outfile:
         pickle.dump(hypo_dict, outfile)
@@ -225,13 +226,13 @@ def run_density_matrix_generation(data_set, vector_file,
 
     count = 0
     for word in hypo_dict.keys():
-        if count % 100 == 0:
-            print("Built the density matrix of ", count, " words out of ", len(hypo_dict.keys()))
+        count += 1
 
         if hypo_dict[word] != 'OOV':
-            matrices[word] = build_density_matrix(word, dim, hypo_dict[word], vectors)
+            matrices[word] = build_density_matrix(hypo_dict[word], dim, vectors)
 
-        count += 1
+        if count % 100 == 0 or count == len(hypo_dict.keys()):
+            print("Built the density matrix of ", count, " words out of ", len(hypo_dict.keys()))
 
     print("Saving results")
     with open(output_file_name, "wb") as dm_file:
