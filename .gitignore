@@ -159,3 +159,6 @@ data/density_matrices/*
 
 data/glove/*
 !data/glove/readme.txt
+
+data/output/*
+!data/output/readme.txt

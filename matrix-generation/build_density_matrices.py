@@ -200,7 +200,9 @@ def run_density_matrix_generation(data_set, vector_file,
         count += 1
 
         if hypo_dict[word] != 'OOV':
-            matrices[word] = build_density_matrix(hypo_dict[word], dim, vectors)
+            result = build_density_matrix(hypo_dict[word], dim, vectors)
+            if type(result) != str:
+                matrices[word] = result
 
         if count % 100 == 0 or count == len(hypo_dict.keys()):
             print("Built the density matrix of ", count, " words out of ", len(hypo_dict.keys()))
