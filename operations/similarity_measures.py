@@ -7,7 +7,7 @@ Author: Benjamin Rodatz, Razin Shaikh, Lia Yeh
 import numpy as np
 import numpy.linalg as LA
 
-from operations.constants import FLOAT_PRECISION
+from operations.helpers import FLOAT_PRECISION
 
 
 def k_ba(rho_a, rho_b):
@@ -28,7 +28,7 @@ def k_ba(rho_a, rho_b):
     if np.all(abs(eg_vals)) < FLOAT_PRECISION:
         return 0  # TODO: why is this 0?
 
-    return np.sum(eg_vals) / np.sum(np.abs(eg_vals))
+    return complex(np.sum(eg_vals) / np.sum(np.abs(eg_vals))).real
 
 
 def __get_error_term(rho_a, rho_b):
@@ -64,7 +64,7 @@ def k_e(rho_a, rho_b):
 
     rho_e = __get_error_term(rho_a, rho_b)
 
-    return 1 - (LA.norm(rho_e) / LA.norm(rho_a))
+    return complex(1 - (LA.norm(rho_e) / LA.norm(rho_a))).real
 
 
 def k_hyp(rho_a, rho_b):
@@ -91,7 +91,7 @@ def k_hyp(rho_a, rho_b):
     elif np.max(egval) < FLOAT_PRECISION:  # check if all eigenvalues are 0
         return 0
     else:
-        return min(1 / np.max(egval), 1)
+        return complex(min(1 / np.max(egval), 1)).real
 
 
 def trace_similarity(rho_a, rho_b):

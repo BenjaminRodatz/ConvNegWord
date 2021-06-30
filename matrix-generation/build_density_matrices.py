@@ -11,7 +11,7 @@ import pickle
 import nltk
 import numpy as np
 
-from operations.constants import FLOAT_PRECISION
+from operations.helpers import FLOAT_PRECISION, get_good_synsets
 
 nltk.download('wordnet', quiet=True)
 
@@ -44,34 +44,6 @@ def get_all_hypernyms(words):
         all_words.add(word)
 
     return all_words
-
-
-def get_good_synsets(synset_list):
-    good_synsets = []
-
-    sense2freq = []
-    for synset in synset_list:
-        sense2freq.append(synset.lemmas()[0].count())
-    sense2freq = np.array(sense2freq)
-
-    if np.all(sense2freq == 0):
-        good_synsets = synset_list
-    else:
-        sorted_idx = np.argsort(sense2freq)[::-1]
-
-        good_synsets.append(synset_list[sorted_idx[0]])
-
-        if len(sorted_idx) == 2:
-            if sense2freq[sorted_idx[1]] != 0:
-                good_synsets.append(synset_list[sorted_idx[0]])
-        elif len(sorted_idx) > 2 and sense2freq[sorted_idx[1]] != 0:
-            same_adj = sense2freq[sorted_idx[1:-1]] == sense2freq[sorted_idx[2:]]
-            if False not in same_adj:
-                good_synsets = synset_list
-            else:
-                for i in sorted_idx[1:list(same_adj).index(False) + 2]:
-                    good_synsets.append(synset_list[i])
-    return good_synsets
 
 
 def get_word_hyponyms(word, pos='n', depth=10):
