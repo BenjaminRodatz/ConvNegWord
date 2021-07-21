@@ -54,3 +54,25 @@ def get_good_synsets(synset_list):
                 for i in sorted_idx[1:list(same_adj).index(False) + 2]:
                     good_synsets.append(synset_list[i])
     return good_synsets
+
+
+def is_density_matrix(rho, check_normalized=False):
+    """
+    Check if the given matrix is a density matrix.
+
+    :param rho:     The matrix to be checked.
+    :param check_normalized: Whether normalization of the density matrix should be checked.
+    :return:   Boolean - Whether the matrix is a density matrix.
+    """
+    if check_normalized and np.abs(np.trace(rho) - 1) > FLOAT_PRECISION:
+        return False
+
+    if la.norm(rho - rho.conj().T) > FLOAT_PRECISION:
+        return False
+
+    ev = la.eigvalsh(rho)
+    if np.any(np.isreal(ev)) == False or np.min(ev) < -FLOAT_PRECISION:
+        return False
+
+    return True
+
