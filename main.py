@@ -3,8 +3,13 @@ import pandas as pd
 import pickle
 import csv
 
+from data_generation import framework1_compare_operations
+from data_generation.context_comparison import context_comparison
+from data_generation.framework2_compare_operations import framework2_compare_operations
+from data_generation.framework34_compare import framework34_comparison
+from data_generation.scalar_comparison import scalar_comparison
 from data_generation.broken_negation_test import broken_negation_test
-from data_generation.compare_operations import *
+from data_generation.framework1_compare_operations import *
 from data_generation.framework_comparison import framework_comparison
 from data_generation.p_entails_not_p import p_entails_not_p
 from operations.helpers import FLOAT_PRECISION
@@ -14,7 +19,8 @@ density = pickle.load(open("data/density_matrices/density_matrices.p", "rb"))
 input_file = "data/alternative_datasets/it_ratings.txt"
 output_file = "data/output/test.csv"
 
-generation_function = framework_comparison
+
+generation_function = context_comparison
 
 
 def run():
@@ -37,7 +43,7 @@ def run():
 
 
 def run_line(df, i):
-    if i % 20 == 0:
+    if i % 1 == 0:
         print(i, " out of ", df['NEGATED'].size)
 
         if i % 10 == 0 and i != 0:
