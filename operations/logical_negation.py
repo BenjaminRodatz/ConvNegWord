@@ -66,7 +66,6 @@ def supp_ker_inverse(rho, s=1, k=1, normalize_supp_inv=False):
     :return:    The density matrix resulting from the negation.
     """
 
-    # TODO: check if normalize support inverse
     inverse = s*normalize(support_inverse(rho)) + k*kernel_inverse(rho)
 
     if normalize_supp_inv:

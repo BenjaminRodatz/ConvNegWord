@@ -26,7 +26,7 @@ def k_ba(rho_a, rho_b):
 
     # if all eigenvalues are 0, then rhoB = rhoA
     if np.all(abs(eg_vals)) < FLOAT_PRECISION:
-        return 1  # TODO: this used to be 0
+        return 1
 
     return complex(np.sum(eg_vals) / np.sum(np.abs(eg_vals))).real
 
