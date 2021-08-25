@@ -1,19 +1,19 @@
-from operations.composition import phaser, fuzz, spider_con
-from operations.logical_negation import id_neg, supp_ker_inverse
+from operations.composition import phaser, fuzz, spider_con, diag_con
+from operations.logical_negation import id_neg, supp_ker_inverse, support_inverse, kernel_inverse
 from operations.similarity_measures import k_hyp, k_e, k_ba, trace_similarity
 from operations.worldly_context_creation import get_worldly_context
 
 
 # Operations to be explored:
 hyponomies = [
-    ("k_hyp", k_hyp, True),
-    ("k_E", k_e, True),
-    ("k_BA", k_ba, False),
+    ("khyp", k_hyp, True),
+    ("kE", k_e, True),
+    ("kBA", k_ba, False),
     ("trace", trace_similarity, False)
 ]
 
 context_functions = [
-    ("best", lambda x: x ** 4)
+    ("hypkhyp", lambda i, word1, word2 : (i**2) * k_hyp(word2, word1).real)
 ]
 
 conjunction_bases = [
@@ -23,21 +23,23 @@ conjunction_bases = [
 
 conjunctions = [
     # ('mult', mult_con),
-    # ('diag', diag_con),
+    ('diag', diag_con),
     ('phaser', phaser),
     ('fuzz', fuzz),
     ('spider', spider_con)
 ]
 
 negations = [
-    ("id_neg", lambda x: id_neg(x)),
-    ("supp_ker", lambda x: supp_ker_inverse(x))
+    ("support", lambda x: support_inverse(x)),
+    ("kernel", lambda x: kernel_inverse(x)),
+    ("suppker", lambda x: supp_ker_inverse(x)),
+    ("subtract", lambda x: id_neg(x))
 ]
 
 
-def combine_operations(density, df, i):
+def framework2_compare_operations(density, df, i):
     """
-    Generate dataset to compare differnet operations in the SemSpace framework. Each is saved in a different column.
+    Generate dataset to compare different operations in the SemSpace framework. Each is saved in a different column.
 
     :param density: The density matrices required for the calculation.
     :param df:  The dataframe containing the experiment data and to which the results will be saved.
