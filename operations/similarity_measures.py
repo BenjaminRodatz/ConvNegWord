@@ -7,7 +7,7 @@ Author: Benjamin Rodatz, Razin Shaikh, Lia Yeh
 import numpy as np
 import numpy.linalg as LA
 
-from operations.helpers import FLOAT_PRECISION
+from operations.helpers import FLOAT_PRECISION, is_density_matrix
 
 
 def k_ba(rho_a, rho_b):
@@ -26,7 +26,7 @@ def k_ba(rho_a, rho_b):
 
     # if all eigenvalues are 0, then rhoB = rhoA
     if np.all(abs(eg_vals)) < FLOAT_PRECISION:
-        return 0  # TODO: why is this 0?
+        return 1  # TODO: this used to be 0
 
     return complex(np.sum(eg_vals) / np.sum(np.abs(eg_vals))).real
 
@@ -58,7 +58,6 @@ def k_e(rho_a, rho_b):
     :return: The entailment score.
     """
 
-    # TODO: why are these checks here?
     if np.all(abs(rho_a) < FLOAT_PRECISION) or np.all(abs(rho_b) < FLOAT_PRECISION):
         return 0
 
@@ -67,7 +66,7 @@ def k_e(rho_a, rho_b):
     return complex(1 - (LA.norm(rho_e) / LA.norm(rho_a))).real
 
 
-def k_hyp(rho_a, rho_b):
+def k_hyp(rho_a, rho_b, check_support=False):
     """
     Generalized version of k_hyp entailment measure as proposed in
     "Graded Entailment for Compositional Distributional Semantics".
@@ -77,8 +76,10 @@ def k_hyp(rho_a, rho_b):
 
     :param rho_a: First matrix.
     :param rho_b: Second matrix.
+    :param check_support: Whether to check if supp(rho_a) \subseteq supp(rho_b).
     :return: The entailment score.
     """
+
     if np.all(abs(rho_a) < FLOAT_PRECISION) or np.all(abs(rho_b) < FLOAT_PRECISION):
         return 0
 
@@ -90,8 +91,14 @@ def k_hyp(rho_a, rho_b):
         return 0
     elif np.max(egval) < FLOAT_PRECISION:  # check if all eigenvalues are 0
         return 0
-    else:
-        return complex(min(1 / np.max(egval), 1)).real
+
+    value = complex(min(1 / np.max(egval), 1)).real
+
+    if check_support:
+        if not is_density_matrix(rho_b - (value / 2) * rho_a):
+            return 0
+
+    return value
 
 
 def trace_similarity(rho_a, rho_b):
@@ -107,3 +114,14 @@ def trace_similarity(rho_a, rho_b):
     :return: The trace similarity.
     """
     return np.trace((rho_a / np.trace(rho_a)) @ (rho_b / np.trace(rho_b)))
+
+
+def forbenius_norm_similarity(rho_a, rho_b):
+    """
+    Simple similarity measure between matrices based on the Frobenius norm of the difference.
+
+    :param rho_a: First density matrix.
+    :param rho_b: Second density matrix.
+    :return: Frobenius norm of rho_a - rho_b
+    """
+    return np.linalg.norm(rho_a - rho_b, 'fro')

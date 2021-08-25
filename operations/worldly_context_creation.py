@@ -30,7 +30,7 @@ def get_contexts(word, density_matrices, pos='n'):
     return contexts
 
 
-def get_worldly_context(word, density_matrices, scalar_function=lambda i: i ** 4, pos='n', do_normalize=True):
+def get_worldly_context(word, density_matrices, scalar_function=lambda i, word1, word2: i ** 4, pos='n', do_normalize=True):
     """
     Return the worldly context of the given word by building it from the WordNet hypernyms of the word.
     The worldly context implemented here is originally described in
@@ -40,7 +40,8 @@ def get_worldly_context(word, density_matrices, scalar_function=lambda i: i ** 4
     :param density_matrices:    A dictionary of all the density matrices necessary.
     :param scalar_function:     The function to calculate the weights of the individual hypernyms.
         (default: f(i) = i**4 - the function which scored highest in experiments)
-    :param pos:     The function of the word as utilized in WordNet (default: 'n' - noun)
+    :param pos:     The function of the word as utilized in WordNet (default: 'n' - noun).
+    :param do_normalize:        Whether to normalize the result of the worldly context (default: True).
     :return:        The density matrix of the worldly context for the given word.
     """
     DENSITY_DIMENSION = density_matrices[(list(density_matrices.keys())[0])].shape[0]
@@ -53,7 +54,7 @@ def get_worldly_context(word, density_matrices, scalar_function=lambda i: i ** 4
         return np.identity(DENSITY_DIMENSION)
 
     for context in contexts:
-        scalar = scalar_function(context[1])
+        scalar = scalar_function(context[1], density_matrices[word], context[0])
 
         worldly_context += scalar * context[0]
 
