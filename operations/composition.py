@@ -169,3 +169,17 @@ def phaser(rho_a, rho_b, if_normalize=True, basis='right'):
         return normalize(rho)
     else:
         return rho
+
+
+def diag_con(A, B, basis='irrelevant'):
+    """
+    Calculate the diag conjunction of A and B as proposed in
+        "Catsclimb entails mammals move:  preserving hyponymy in compositional distributional semantics."
+
+    :param A: First density matrix.
+    :param B: Second density matrix.
+    :param basis: Dummy parameter to make function signature equal to that of the other composition operations.
+    :return:  The density matrix resulting from the composition.
+    """
+    return np.diag(np.diag(A)).dot(np.diag(np.diag(B)))
+
